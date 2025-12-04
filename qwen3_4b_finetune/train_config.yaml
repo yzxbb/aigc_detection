@@ -1,0 +1,55 @@
+### model
+# 请修改为qwen3-4b模型的路径
+model_name_or_path: /path/to/Qwen3-4B-Instruct  # 请修改为实际路径
+trust_remote_code: true
+
+### method
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_target: all  # lora所有模块
+# deepspeed: /path/to/deepspeed_config.json  # 如果需要使用deepspeed，取消注释并配置
+
+### dataset
+# 数据集名称，需要在LLama Factory的data目录下创建对应的json文件
+dataset: train_sft_llm_detect_mask_aug_qwen3_4b
+template: qwen  # 使用qwen模板
+cutoff_len: 1800  # 截断最大长度
+max_samples: 1000000000  # 每个dataset的最大长度
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### output
+output_dir: ./output/qwen3-4b-lora
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: true
+
+### train
+per_device_train_batch_size: 4  # 根据GPU显存调整
+gradient_accumulation_steps: 4
+learning_rate: 5.0e-5
+num_train_epochs: 1.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true  # 如果支持bf16，设置为true
+fp16: false  # 如果不支持bf16，使用fp16
+ddp_timeout: 180000000  # 并行通信的超时限制
+
+max_grad_norm: 1.0  # 梯度裁剪阈值
+warmup_steps: 24  # 学习率预热步数
+packing: false  # 将不同长度的进行打包
+flash_attn: auto
+lora_rank: 256
+lora_alpha: 256
+lora_dropout: 0.1
+torch_empty_cache_steps: 4
+resume_from_checkpoint: true
+
+### eval
+# val_size: 0.1
+# per_device_eval_batch_size: 1
+# eval_strategy: steps
+# eval_steps: 500
+
